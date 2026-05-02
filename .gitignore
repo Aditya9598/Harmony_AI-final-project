@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.streamlit/secrets.toml
+.env
+kaggle.json
+data/
+models/*.keras
+models/*.h5
+reports/
