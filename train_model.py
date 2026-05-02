@@ -221,7 +221,7 @@ def train(args: argparse.Namespace) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train the Harmony AI skin disease classifier.")
-    parser.add_argument("--epochs", type=int, default=int(os.getenv("EPOCHS", "20")))
+    parser.add_argument("--epochs", type=int, default=int(os.getenv("EPOCHS", "1")))
     parser.add_argument("--skip-download", action="store_true", help="Use an existing dataset zip/extract.")
     parser.add_argument("--force", action="store_true", help="Redownload and re-extract the dataset.")
     parser.add_argument("--train-dir", type=str, default=None, help="Optional explicit train folder.")

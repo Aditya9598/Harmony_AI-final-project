@@ -1,42 +1,101 @@
-# Harmony AI Final Project
+# Harmony AI - Virtual Intelligence
 
-Streamlit frontend and VGG16 training pipeline for skin disease image classification.
+Production-ready full-stack healthcare AI application with:
 
-## Setup
+- FastAPI backend
+- React + Tailwind frontend (Vite)
+- Modular chatbot providers (Azure OpenAI / OpenAI / Gemini / Mock)
+- Skin disease prediction using pretrained VGG19 `.h5` model
 
-Use Python 3.10, 3.11, or 3.12 for TensorFlow compatibility.
+## Project Structure
+
+```text
+backend/
+  main.py
+  config.py
+  routes/
+  services/
+  models/
+  utils/
+  model/
+  .env
+  .env.example
+  requirements.txt
+
+frontend/
+  src/
+  .env
+  .env.example
+```
+
+## Environment Files
+
+Environment files are created in:
+
+- `backend/.env`
+- `backend/.env.example`
+- `frontend/.env`
+- `frontend/.env.example`
+
+Do not commit real secrets. Keep API keys only in local `.env`.
+
+## Backend Setup
 
 ```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Download your Kaggle API token from Kaggle and place `kaggle.json` in this project root. The training script copies it to `~/.kaggle/kaggle.json` and applies restricted permissions where supported.
+Place your pretrained model at:
 
-## Train the Model
+`backend/model/vgg19_skin_model.h5`
 
-```bash
-python train_model.py
-```
-
-The script downloads `subirbiswas19/skin-disease-dataset`, extracts it into `data/`, trains a VGG16-based classifier, and saves:
-
-- `models/skin_disease_vgg16.keras`
-- `models/class_names.json`
-- `reports/accuracy.png`
-- `reports/loss.png`
-
-If the dataset is already downloaded, use:
+Then run backend:
 
 ```bash
-python train_model.py --skip-download
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-## Run the Streamlit App
+### Backend APIs
+
+- `GET /status`
+- `POST /predict-skin` (multipart image upload)
+- `POST /chat` (mental wellness topics only)
+
+## Frontend Setup
 
 ```bash
-streamlit run app.py
+cd frontend
+npm install
+npm run dev
 ```
 
-Upload an image, click **Submit Prediction**, and the app will show the predicted disease with confidence scores.
+Frontend runs at:
 
-This is an academic project demo and should not be used as a medical diagnosis tool.
+`http://localhost:5173`
+
+## Chat Provider Configuration
+
+In `backend/.env`, set:
+
+- `CHAT_PROVIDER=azure_openai` (default)
+- or `openai`, `gemini`, `mock`
+
+For Azure OpenAI, configure:
+
+- `AZURE_OPENAI_ENDPOINT`
+- `AZURE_OPENAI_API_VERSION`
+- `AZURE_OPENAI_DEPLOYMENT`
+- `AZURE_OPENAI_API_KEY`
+
+## Important Notes
+
+- Backend rejects unrelated chatbot topics and returns a polite refusal.
+- Self-harm intent triggers emergency-support response.
+- All configuration values are env-driven (no hardcoded runtime secrets/paths/ports).
+- This project is not a substitute for medical diagnosis or clinical mental health treatment.
+
+
+ python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload

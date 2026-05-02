@@ -5,7 +5,7 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parent
-MODEL_PATH = ROOT / "models" / "skin_disease_vgg16.keras"
+MODEL_PATH = ROOT / "models" / "hormony_model.h5"
 CLASS_NAMES_PATH = ROOT / "models" / "class_names.json"
 IMAGE_SIZE = (256, 256)
 
@@ -76,7 +76,7 @@ def cached_class_names(class_names_path: str):
 def show_training_help() -> None:
     st.warning(
         "Trained model not found. Train it first with `python train_model.py`, "
-        "or place `skin_disease_vgg16.keras` and `class_names.json` inside the `models` folder."
+        "or place `hormony_model.h5` and `class_names.json` inside the `models` folder."
     )
     with st.expander("Training setup"):
         st.code(
