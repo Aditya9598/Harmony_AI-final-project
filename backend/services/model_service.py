@@ -14,13 +14,30 @@ from utils.constants import SKIN_LABEL_CONTEXT
 def _sanitize_model_config(raw_config: dict) -> dict:
     """Normalize InputLayer keys for cross-version Keras compatibility."""
     config = json.loads(json.dumps(raw_config))
-    for layer in config.get("config", {}).get("layers", []):
-        if layer.get("class_name") != "InputLayer":
-            continue
-        layer_cfg = layer.get("config", {})
-        if "batch_shape" in layer_cfg and "batch_input_shape" not in layer_cfg:
-            layer_cfg["batch_input_shape"] = layer_cfg.pop("batch_shape")
-        layer_cfg.pop("optional", None)
+
+    def _walk(node):
+        if isinstance(node, dict):
+            # Keras 3 may serialize dtype as an object config that tf.keras 2.x
+            # layer constructors cannot consume (expects a string/policy name).
+            dtype_value = node.get("dtype")
+            if isinstance(dtype_value, dict):
+                policy_name = dtype_value.get("config", {}).get("name")
+                node["dtype"] = policy_name or "float32"
+
+            if node.get("class_name") == "InputLayer":
+                layer_cfg = node.get("config", {})
+                if isinstance(layer_cfg, dict):
+                    # Some exported models use Keras-3 style keys that older tf.keras rejects.
+                    if "batch_shape" in layer_cfg and "batch_input_shape" not in layer_cfg:
+                        layer_cfg["batch_input_shape"] = layer_cfg.pop("batch_shape")
+                    layer_cfg.pop("optional", None)
+            for value in node.values():
+                _walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                _walk(item)
+
+    _walk(config)
     return config
 
 
