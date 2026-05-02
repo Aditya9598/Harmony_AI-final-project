@@ -13,4 +13,4 @@ backend/__pycache__/
 frontend/node_modules/
 frontend/dist/
 
-backend\.env.example
+backend/.env.example
